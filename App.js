@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 export default function App() {
   // Weather API
   const [city, setCity] = useState(null)
-  const [location, setLocation] = useState('London')
+  const [location, setLocation] = useState('Nairobi')
   const [showSearch, setShowSearch] = useState(false)
   useEffect(() => {
     const getWeather = async () => {
@@ -39,6 +39,33 @@ export default function App() {
     }
     getWeather()
   }, [])
+
+  const handleLocation = () => {
+    setLocation(location)
+
+    const getWeather = async () => {
+      const url = `https://weatherapi-com.p.rapidapi.com/current.json?q=${location}`
+      const options = {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': '',
+          'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com',
+        },
+      }
+
+      try {
+        const response = await fetch(url, options)
+        const result = await response.json()
+        setCity(result)
+        console.log(result)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getWeather()
+
+    setShowSearch(false)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -66,8 +93,9 @@ export default function App() {
               <TextInput
                 placeholder="Enter City name"
                 style={styles.searchInput}
+                onChangeText={text => setLocation(text)}
               />
-              <Button title="Search" />
+              <Button title="Search" onPress={handleLocation} />
             </View>
           )}
 
@@ -108,12 +136,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   headerText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 25,
   },
   temp: {
     alignItems: 'center',
@@ -134,8 +162,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 32,
     paddingHorizontal: 10,
-    paddingVertical: 70,
-    marginTop: 32,
+    paddingVertical: 50,
+    marginTop: 72,
   },
   feels: {
     color: '#fff',
@@ -153,8 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 70,
-    marginTop: 32,
+    marginVertical: 70,
   },
   searchInput: {
     width: 250,
