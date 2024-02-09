@@ -6,6 +6,8 @@ import {
   Text,
   View,
   Platform,
+  TextInput,
+  Button,
 } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useEffect, useState } from 'react'
@@ -13,9 +15,11 @@ import { useEffect, useState } from 'react'
 export default function App() {
   // Weather API
   const [city, setCity] = useState(null)
+  const [location, setLocation] = useState('London')
+  const [showSearch, setShowSearch] = useState(false)
   useEffect(() => {
     const getWeather = async () => {
-      const url = 'https://weatherapi-com.p.rapidapi.com/current.json?q=Nairobi'
+      const url = `https://weatherapi-com.p.rapidapi.com/current.json?q=${location}`
       const options = {
         method: 'GET',
         headers: {
@@ -35,6 +39,7 @@ export default function App() {
     }
     getWeather()
   }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       {city && (
@@ -48,8 +53,23 @@ export default function App() {
         >
           <View style={styles.header}>
             <Text style={styles.headerText}>{city.location.name}</Text>
-            <Feather name="settings" size={24} color="#fff" />
+            <Feather
+              name="settings"
+              size={24}
+              color="#fff"
+              onPress={() => setShowSearch(!showSearch)}
+            />
           </View>
+
+          {showSearch && (
+            <View style={styles.searchView}>
+              <TextInput
+                placeholder="Enter City name"
+                style={styles.searchInput}
+              />
+              <Button title="Search" />
+            </View>
+          )}
 
           <View style={styles.temp}>
             <Text style={styles.tempShown}>{`${city.current.temp_c}°`}</Text>
@@ -106,7 +126,7 @@ const styles = StyleSheet.create({
   tempText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 25,
   },
   condition: {
     flexDirection: 'row',
@@ -127,5 +147,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+  searchView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 70,
+    marginTop: 32,
+  },
+  searchInput: {
+    width: 250,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 5,
   },
 })
